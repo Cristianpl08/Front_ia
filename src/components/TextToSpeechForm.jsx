@@ -34,7 +34,7 @@ const TextToSpeechForm = () => {
   useEffect(() => {
     const fetchVoices = async () => {
       try {
-        const response = await fetch(`${urlback}/get-voices`);
+        const response = await fetch(`${urlback}/api/get-voices`);
         const data = await response.json();
         if (response.ok) {
           setAvailableVoices(data.voices);
@@ -58,7 +58,7 @@ const TextToSpeechForm = () => {
       formData.append('srt_file', file);
 
       try {
-        const response = await fetch(`${urlback}/parse-srt`, {
+        const response = await fetch(`${urlback}/api/parse-srt`, {
           method: 'POST',
           body: formData,
         });
@@ -112,7 +112,7 @@ const TextToSpeechForm = () => {
     formData.append('voice_ids', JSON.stringify(voiceIds));
 
     try {
-      const response = await fetch(`${urlback}/process-srt`, {
+      const response = await fetch(`${urlback}/api/process-srt`, {
         method: 'POST',
         body: formData,
       });
