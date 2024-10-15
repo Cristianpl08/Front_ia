@@ -2,23 +2,30 @@ import React from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 //const CLIENT_ID = "116029599187-nmq5i3ijo8ojo766q9naf9d8tueduft8.apps.googleusercontent.com";
-const CLIENT_ID = "277375272976-pkvaiiom7klc9mubv2aj8lbrtroqvb7i.apps.googleusercontent.com";
+//const CLIENT_ID = "277375272976-pkvaiiom7klc9mubv2aj8lbrtroqvb7i.apps.googleusercontent.com";
+const CLIENT_ID = "611668385896-jeom4mshdeqc55rh8hfs2bgi6dnka1q3.apps.googleusercontent.com"; //cristianp app
+//const CLIENT_ID = "872832142091-usmr0n4tu00350vn28clr0pq0m9qic03.apps.googleusercontent.com" ;// christian app //cristianp app
 const Login = ({ onLoginSuccess }) => {
   const handleLoginSuccess = (credentialResponse) => {
     console.log('Login Success: credential', credentialResponse.credential);
     
     // Aquí puedes realizar la lógica de validación con tu backend
-    fetch('http://127.0.0.1:5005/login', {
+    fetch('https://backend-ia.dicapta.com/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: credentialResponse.credential })
     })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then(data => {
         console.log(data);
-        onLoginSuccess(); // Notificamos a App.jsx que el login fue exitoso
+        onLoginSuccess();
       })
-      .catch(error => console.log(error));
+      .catch(error => console.error('Error:', error));
   };
 
   const handleLoginFailure = () => {
