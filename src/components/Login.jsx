@@ -3,8 +3,8 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 //const CLIENT_ID = "116029599187-nmq5i3ijo8ojo766q9naf9d8tueduft8.apps.googleusercontent.com";
 //const CLIENT_ID = "277375272976-pkvaiiom7klc9mubv2aj8lbrtroqvb7i.apps.googleusercontent.com";
-const CLIENT_ID = "611668385896-jeom4mshdeqc55rh8hfs2bgi6dnka1q3.apps.googleusercontent.com"; //cristianp app
-//const CLIENT_ID = "872832142091-usmr0n4tu00350vn28clr0pq0m9qic03.apps.googleusercontent.com" ;// christian app //cristianp app
+//const CLIENT_ID = "611668385896-jeom4mshdeqc55rh8hfs2bgi6dnka1q3.apps.googleusercontent.com"; //cristianp app
+const CLIENT_ID = "872832142091-usmr0n4tu00350vn28clr0pq0m9qic03.apps.googleusercontent.com" ;// christian app //cristianp app
 const Login = ({ onLoginSuccess }) => {
   const handleLoginSuccess = (credentialResponse) => {
     console.log('Login Success: credential', credentialResponse.credential);

@@ -6,11 +6,6 @@ import AddIcon from '@mui/icons-material/Add';
 import CircularProgress from '@mui/material/CircularProgress';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 
-const VOICE_MODELS = [
-  "eleven_turbo_v2",
-  "eleven_turbo_v2_5",
-  "eleven_multilingual"
-];
 
 const TextToSpeechForm = () => {
   const [srtFile, setSrtFile] = useState(null);
@@ -18,16 +13,46 @@ const TextToSpeechForm = () => {
   const urlback = 'https://backend-ia.dicapta.com';
   const [finalFileName, setFinalFileName] = useState('');
   const [numSpeakers, setNumSpeakers] = useState(1);
-  const [speakers, setSpeakers] = useState([{ name: '', id: '', model: VOICE_MODELS[0] }]);
+  const [voiceModels, setVoiceModels] = useState([]);
+  const [speakers, setSpeakers] = useState([{ name: '', id: '', model: voiceModels[0] }]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [availableVoices, setAvailableVoices] = useState([]);
 
+
+  useEffect(() => {
+    const fetchVoiceModels = async () => {
+      try {
+        const response = await fetch(`${urlback}/api/get-voice-models`);
+        const data = await response.json();
+        if (response.ok) {
+          // Filtrar los modelos de voz donde can_do_text_to_speech es true
+          const filteredVoiceModels = data.voice_models.filter(model => model.can_do_text_to_speech);
+          setVoiceModels(filteredVoiceModels);
+        } else {
+          console.error('Error fetching voice models:', data.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchVoiceModels();
+  }, []);
+  
+  // ... existing code ...
   useEffect(() => {
     setSpeakers(Array(numSpeakers).fill().map((_, i) => ({
       name: speakers[i]?.name || '',
       id: speakers[i]?.id || '',
-      model: speakers[i]?.model || VOICE_MODELS[0]
+      model: speakers[i]?.model || voiceModels[0] || ''
+    })));
+  }, [numSpeakers, voiceModels]);
+  useEffect(() => {
+    setSpeakers(Array(numSpeakers).fill().map((_, i) => ({
+      name: speakers[i]?.name || '',
+      id: speakers[i]?.id || '',
+      model: speakers[i]?.model || voiceModels[0]
     })));
   }, [numSpeakers]);
 
@@ -72,7 +97,7 @@ const TextToSpeechForm = () => {
           setSpeakers(uniqueVoices.map(voice => ({
             name: voice,
             id: '',
-            model: VOICE_MODELS[0]
+            model: voiceModels[0] || ''
           })));
         }
       } catch (error) {
@@ -199,9 +224,9 @@ const TextToSpeechForm = () => {
               value={speaker.model}
               onChange={(e) => handleSpeakersChange(index, 'model', e.target.value)}
             >
-              {VOICE_MODELS.map((model) => (
-                <option key={model} value={model}>
-                  {model}
+               {voiceModels.map((model) => (
+          <option key={model.model_id} value={model.model_id}>
+            {model.name}
                 </option>
               ))}
             </select>
