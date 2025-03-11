@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import AddIcon from '@mui/icons-material/Add';
-
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CircularProgress from '@mui/material/CircularProgress';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 
@@ -55,6 +55,19 @@ const TextToSpeechForm = () => {
       model: speakers[i]?.model || voiceModels[0]
     })));
   }, [numSpeakers]);
+  const playDemo = async (voiceId) => {
+    try {
+      const response = await fetch(`${urlback}/api/play-demo?voice_id=${voiceId}`);
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        audio.play();
+      }
+    } catch (error) {
+      console.error('Error playing demo:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchVoices = async () => {
@@ -109,8 +122,25 @@ const TextToSpeechForm = () => {
   const handleSpeakersChange = (index, field, value) => {
     const updatedSpeakers = [...speakers];
     updatedSpeakers[index][field] = value;
+    
+    // Si el campo actualizado es el ID de la voz, filtramos los modelos compatibles
+    if (field === 'id') {
+      const selectedVoice = availableVoices.find(voice => voice.voice_id === value);
+      if (selectedVoice) {
+        // Filtramos los modelos de voz que son compatibles con la voz seleccionada
+        const compatibleModels = voiceModels.filter(model => 
+          selectedVoice.high_quality_base_model_ids.includes(model.model_id)
+        );
+        // Actualizamos el modelo a uno compatible si el actual no lo es
+        if (!selectedVoice.high_quality_base_model_ids.includes(updatedSpeakers[index].model)) {
+          updatedSpeakers[index].model = compatibleModels[0]?.model_id || '';
+        }
+      }
+    }
+    
     setSpeakers(updatedSpeakers);
   };
+  
 
   const handleClear = () => {
     setSrtFile(null);
@@ -204,32 +234,51 @@ const TextToSpeechForm = () => {
           </div>
 
           <div className="form-group">
-            <label>Voice {index + 1} - ID:</label>
-            <select
-              value={speaker.id}
-              onChange={(e) => handleSpeakersChange(index, 'id', e.target.value)}
-            >
-              <option value="">Select Voice ID</option>
-              {availableVoices.map(voice => (
-                <option key={voice.voice_id} value={voice.voice_id}>
-                  {voice.name} ({voice.voice_id})
-                </option>
-              ))}
-            </select>
-          </div>
+  <label>Voice {index + 1} - ID:</label>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <select
+      value={speaker.id}
+      onChange={(e) => handleSpeakersChange(index, 'id', e.target.value)}
+      style={{ flex: 1 }}
+    >
+      <option value="">Select Voice ID</option>
+      {availableVoices.map((voice) => (
+        <option key={voice.voice_id} value={voice.voice_id}>
+          {voice.name}
+        </option>
+      ))}
+    </select>
+    {speaker.id && (
+      <PlayArrowIcon 
+        onClick={() => playDemo(speaker.id)}
+        style={{ 
+          cursor: 'pointer',
+          color: 'white',
+          fontSize: '24px'
+        }}
+      />
+    )}
+  </div>
+</div>
 
           <div className="form-group">
             <label>Voice {index + 1} - Model:</label>
             <select
-              value={speaker.model}
-              onChange={(e) => handleSpeakersChange(index, 'model', e.target.value)}
-            >
-               {voiceModels.map((model) => (
-          <option key={model.model_id} value={model.model_id}>
-            {model.name}
-                </option>
-              ))}
-            </select>
+    value={speaker.model}
+    onChange={(e) => handleSpeakersChange(index, 'model', e.target.value)}
+  >
+    {voiceModels
+      .filter(model => {
+        const selectedVoice = availableVoices.find(voice => voice.voice_id === speaker.id);
+        return selectedVoice ? selectedVoice.high_quality_base_model_ids.includes(model.model_id) : true;
+      })
+      .map((model) => (
+        <option key={model.model_id} value={model.model_id}>
+          {model.name}
+        </option>
+      ))}
+  </select>
+          
           </div>
         </div>
       ))}
