@@ -214,3 +214,15 @@ color: #000000;
 .custom-google-button:hover {
   background-color: #357ae8; /* Cambia el color al pasar el ratón */
 }
+.menu-option {
+  font-family: 'Comic Sans MS', 'Cursive', sans-serif; /* Cambiar la fuente */
+  font-size: 1.2rem; /* Aumentar tamaño de fuente */
+  color: # #FFFFFF ;
+  border: 1px solid #000; /* Añadir borde */
+}
+.menu-option:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px rgba(0, 0, 0, 0.2);
+  background-color: #357ae8; /* Cambia el color al pasar el ratón */
+}
+
