@@ -8,11 +8,11 @@ const TranscripIADicapta = () => {
   const [message, setMessage] = useState('');
 
   const languages = [
-    { code: 'es', name: 'Español' },
-    { code: 'en', name: 'Inglés' },
-    { code: 'fr', name: 'Francés' },
-    { code: 'de', name: 'Alemán' },
-    // Agrega más idiomas si deseas
+    { code: 'es', name: 'Spanish' },
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'French' },
+    { code: 'de', name: 'German' },
+    // Add more languages if needed
   ];
 
   const handleMainFileChange = (e) => {
@@ -27,28 +27,28 @@ const TranscripIADicapta = () => {
     e.preventDefault();
 
     if (!language || !mainFile || !bibleFile) {
-      setMessage('Por favor completa todos los campos.');
+      setMessage('Please complete all fields.');
       return;
     }
 
-    setMessage('Formulario enviado (aquí agregar lógica).');
-    // Aquí se puede agregar la lógica para enviar archivos al backend
+    setMessage('Form submitted (add logic here).');
+    // Add logic to send files to backend here
   };
 
   return (
     <div className="container">
       <h1>Transcrip IA Dicapta</h1>
-      <p className="subtitle">Sube tus archivos para transcripción</p>
+      <p className="subtitle">Upload your files for transcription</p>
 
-      <form onSubmit={handleSubmit} style={{ maxWidth: '400px', marginLeft: 'auto', marginRight: 'auto' }}>
-        <div className="form-group" style={{ marginBottom: '20px' }}>
-          <label>Idioma</label>
+      <form onSubmit={handleSubmit} className="transcrip-form">
+        <div className="form-group2">
+          <label>Language</label>
           <select
             className="input-short"
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
-            <option value="">Selecciona un idioma</option>
+            <option value="">Select a language</option>
             {languages.map((lang) => (
               <option key={lang.code} value={lang.code}>
                 {lang.name}
@@ -57,14 +57,14 @@ const TranscripIADicapta = () => {
           </select>
         </div>
 
-        <div className="form-group" style={{ marginBottom: '20px' }}>
+        <div className="form-group2">
           {mainFile ? (
             <div className="file-label-selected">
-              <p className="file-name">Archivo principal: {mainFile.name}</p>
+              <p className="file-name">Main file: {mainFile.name}</p>
             </div>
           ) : (
             <label className="file-label" htmlFor="main-file-upload">
-              Subir archivo principal <FileUploadIcon className="file-icon" />
+              Upload main file <FileUploadIcon className="file-icon" />
               <input
                 id="main-file-upload"
                 type="file"
@@ -76,14 +76,14 @@ const TranscripIADicapta = () => {
           )}
         </div>
 
-        <div className="form-group" style={{ marginBottom: '20px' }}>
+        <div className="form-group2">
           {bibleFile ? (
             <div className="file-label-selected">
-              <p className="file-name">Archivo Bible: {bibleFile.name}</p>
+              <p className="file-name">Bible file: {bibleFile.name}</p>
             </div>
           ) : (
             <label className="file-label" htmlFor="bible-file-upload">
-              Subir archivo Bible <FileUploadIcon className="file-icon" />
+              Upload Bible file <FileUploadIcon className="file-icon" />
               <input
                 id="bible-file-upload"
                 type="file"
@@ -95,14 +95,14 @@ const TranscripIADicapta = () => {
           )}
         </div>
 
-        <div className="form-actions" style={{ display: 'flex', justifyContent: 'center', gap: '15px' }}>
-          <button className="process-btn" type="submit">
-            Enviar
+        <div className="form-actions">
+          <button className="process-btn2" type="submit">
+            Submit
           </button>
         </div>
       </form>
 
-      {message && <p style={{ marginTop: '20px', textAlign: 'center' }}>{message}</p>}
+      {message && <p className="message-info">{message}</p>}
     </div>
   );
 };

@@ -88,11 +88,23 @@ const BackButton = () => {
   const navigate = useNavigate();
   return (
     <button
+      className="clean-btn2"
+      onClick={() => navigate('/menu')}
+      style={{ display: 'block', margin: '20px auto', cursor: 'pointer' }}
+    >
+      ← Back to Menu
+    </button>
+  );
+};
+const BackButton2 = () => {
+  const navigate = useNavigate();
+  return (
+    <button
       className="clean-btn"
       onClick={() => navigate('/menu')}
       style={{ display: 'block', margin: '20px auto', cursor: 'pointer' }}
     >
-      ← Volver al Menú
+      ← Back to Menu
     </button>
   );
 };
@@ -100,7 +112,7 @@ const BackButton = () => {
 // Componente TextToSpeech con botón para volver al menú
 const TextToSpeechFormWithBack = () => (
   <>
-    <BackButton />
+    <BackButton2 />
     <TextToSpeechForm />
   </>
 );

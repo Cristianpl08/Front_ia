@@ -12,7 +12,7 @@ const Menu = () => {
           Text-to-Speech
         </div>
         <div className="menu-option" onClick={() => navigate('/transcrip-ia-dicapta')} style={{ cursor: 'pointer', border: '1px solid #ccc', padding: '20px', borderRadius: '5px', maxWidth: '300px', margin: '0 auto', textAlign: 'center' }}>
-          Transcrip IA Dicapta
+          Transcrip IA
         </div>
       </div>
     </div>

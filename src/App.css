@@ -38,7 +38,7 @@ h1 {
 }
 
 p.subtitle {
-  padding-left: 31%;
+ 
   font-size: 1.2rem; /* Aumentar tamaño de fuente */
   color: #000000; /* Asegurar que el color sea negro */
   font-style: italic; /* Mantener estilo cursiva */
@@ -51,6 +51,13 @@ p.subtitle {
   margin-bottom: 1rem; 
   
   width:40%;
+  align-items: center;
+  justify-content: center;/* Reducir márgenes entre los grupos de formularios */
+}
+.form-group2 {
+  margin-bottom: 1rem; 
+  
+  width:100%;
   align-items: center;
   justify-content: center;/* Reducir márgenes entre los grupos de formularios */
 }
@@ -112,14 +119,25 @@ button {
  margin-right: 50%;
  border: 1px solid #000; /* Añadir borde */
 }
-
+.clean-btn2 {
+  background-color: #FFDB58;
+  color: #000000;
+  width: 30%;
+ margin-right: 50%;
+ border: 1px solid #000; /* Añadir borde */
+}
 .process-btn {
   background-color: #BDFCC9;
   color: #000000;
   width: 10%;
   border: 1px solid #000; /* Añadir borde */
 }
-
+.process-btn2 {
+  background-color: #BDFCC9;
+  color: #000000;
+  width: 30%;
+  border: 1px solid #000; /* Añadir borde */
+}
 button:disabled {
   background-color: #ddd;
   cursor: not-allowed;
