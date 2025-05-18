@@ -217,7 +217,7 @@ color: #000000;
 .menu-option {
   font-family: 'Comic Sans MS', 'Cursive', sans-serif; /* Cambiar la fuente */
   font-size: 1.2rem; /* Aumentar tamaño de fuente */
-  color: # #FFFFFF ;
+  color: #FFFFFF ;
   border: 1px solid #000; /* Añadir borde */
 }
 .menu-option:hover {
