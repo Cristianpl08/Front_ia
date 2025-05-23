@@ -223,6 +223,7 @@ color: #000000;
 .menu-option:hover {
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px rgba(0, 0, 0, 0.2);
-  background-color: #357ae8; /* Cambia el color al pasar el ratón */
+  background-color: white; /* Cambia el color al pasar el ratón */
+  color: #000000;
 }
 
