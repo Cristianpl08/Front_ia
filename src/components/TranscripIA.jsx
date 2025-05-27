@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Box } from '@mui/material';
 
 const TranscripIADicapta = () => {
   const [language, setLanguage] = useState('');
   const [finalFileName, setFinalFileName] = useState('');
   const [numberOfParts, setNumberOfParts] = useState(1);
   const [files, setFiles] = useState({});
+  const [bibleFile, setBibleFile] = useState(null);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const urlback = 'https://backend-ia.dicapta.com';
@@ -30,11 +32,20 @@ const TranscripIADicapta = () => {
     setFiles(newFiles);
   };
 
+  const handleBibleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && !file.name.toLowerCase().endsWith('.xlsx')) {
+      setMessage('Please upload only XLSX files for the Bible');
+      return;
+    }
+    setBibleFile(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!language || !finalFileName || Object.keys(files).length !== numberOfParts) {
-      setMessage('Please complete all fields and upload all parts.');
+    if (!language || !finalFileName || !bibleFile || Object.keys(files).length !== numberOfParts) {
+      setMessage('Please complete all fields and upload all required files.');
       return;
     }
 
@@ -44,7 +55,13 @@ const TranscripIADicapta = () => {
     );
 
     if (!allFilesAreRTF) {
-      setMessage('All files must be in RTF format');
+      setMessage('All script files must be in RTF format');
+      return;
+    }
+
+    // Validate Bible file is XLSX
+    if (!bibleFile.name.toLowerCase().endsWith('.xlsx')) {
+      setMessage('Bible file must be in XLSX format');
       return;
     }
 
@@ -53,18 +70,25 @@ const TranscripIADicapta = () => {
 
     try {
       const formData = new FormData();
-      // Get the full language name from the selected code
       const selectedLanguage = languages.find(lang => lang.code === language);
       formData.append('idioma_destino', selectedLanguage ? selectedLanguage.name : language);
       formData.append('nombre_xlsx', `${finalFileName}.xlsx`);
+      formData.append('bible_file', bibleFile);
 
       // Log files before appending
-      console.log('Files to be sent:', Object.entries(files).map(([key, file]) => ({
-        part: key,
-        name: file.name,
-        type: file.type,
-        size: file.size
-      })));
+      console.log('Files to be sent:', {
+        bible: {
+          name: bibleFile.name,
+          type: bibleFile.type,
+          size: bibleFile.size
+        },
+        script_files: Object.entries(files).map(([key, file]) => ({
+          part: key,
+          name: file.name,
+          type: file.type,
+          size: file.size
+        }))
+      });
 
       // Append all files
       Object.values(files).forEach((file) => {
@@ -90,6 +114,11 @@ const TranscripIADicapta = () => {
         body: {
           idioma_destino: selectedLanguage ? selectedLanguage.name : language,
           nombre_xlsx: `${finalFileName}.xlsx`,
+          bible_file: {
+            name: bibleFile.name,
+            type: bibleFile.type,
+            size: bibleFile.size
+          },
           archivos_count: Object.keys(files).length,
           archivos_details: Object.entries(files).map(([key, file]) => ({
             part: key,
@@ -199,6 +228,26 @@ const TranscripIADicapta = () => {
           </select>
         </div>
 
+        <div className="form-group2">
+          {bibleFile ? (
+            <div className="file-label-selected">
+              <p className="file-name">Bible file: {bibleFile.name}</p>
+            </div>
+          ) : (
+            <label className="file-label" htmlFor="bible-file-upload">
+              Upload Bible file (XLSX) <FileUploadIcon className="file-icon" />
+              <input
+                id="bible-file-upload"
+                type="file"
+                accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                onChange={handleBibleFileChange}
+                className="input-short"
+                style={{ display: 'none' }}
+              />
+            </label>
+          )}
+        </div>
+
         {[...Array(numberOfParts)].map((_, index) => (
           <div key={index} className="form-group2">
             {files[index + 1] ? (
@@ -221,21 +270,46 @@ const TranscripIADicapta = () => {
           </div>
         ))}
 
-        <div className="form-actions">
+        <div className="form-actions" style={{ position: 'relative', height: 48 }}>
           <button 
             className="process-btn2" 
             type="submit"
             disabled={isLoading}
+            style={isLoading ? { 
+              opacity: 0, 
+              pointerEvents: 'none', 
+              position: 'absolute', 
+              left: 0, 
+              top: 0, 
+              width: '100%', 
+              height: '100%', 
+              border: 'none', 
+              background: 'transparent' 
+            } : {}}
           >
-            {isLoading ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <CircularProgress size={20} color="inherit" />
-                Processing...
-              </div>
-            ) : (
-              'Submit'
-            )}
+            Submit
           </button>
+          {isLoading && (
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              background: '#e0e0e0',
+              borderRadius: '8px',
+              padding: '8px 16px',
+              zIndex: 2,
+              border: '1px solid #333',
+              minWidth: 160,
+              justifyContent: 'center'
+            }}>
+              <CircularProgress size={24} style={{ color: '#333' }} />
+              <span style={{ color: '#333', fontWeight: 600 }}>Processing...</span>
+            </div>
+          )}
         </div>
       </form>
 
