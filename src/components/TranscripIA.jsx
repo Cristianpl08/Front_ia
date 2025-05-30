@@ -9,6 +9,7 @@ const TranscripIADicapta = () => {
   const [numberOfParts, setNumberOfParts] = useState(1);
   const [files, setFiles] = useState({});
   const [bibleFile, setBibleFile] = useState(null);
+  const [hasBible, setHasBible] = useState('no');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const urlback = 'https://backend-ia.dicapta.com';
@@ -44,7 +45,7 @@ const TranscripIADicapta = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!language || !finalFileName || !bibleFile || Object.keys(files).length !== numberOfParts) {
+    if (!language || !finalFileName || Object.keys(files).length !== numberOfParts) {
       setMessage('Please complete all fields and upload all required files.');
       return;
     }
@@ -59,8 +60,8 @@ const TranscripIADicapta = () => {
       return;
     }
 
-    // Validate Bible file is XLSX
-    if (!bibleFile.name.toLowerCase().endsWith('.xlsx')) {
+    // Validate Bible file if hasBible is 'yes'
+    if (hasBible === 'yes' && (!bibleFile || !bibleFile.name.toLowerCase().endsWith('.xlsx'))) {
       setMessage('Bible file must be in XLSX format');
       return;
     }
@@ -73,63 +74,20 @@ const TranscripIADicapta = () => {
       const selectedLanguage = languages.find(lang => lang.code === language);
       formData.append('idioma_destino', selectedLanguage ? selectedLanguage.name : language);
       formData.append('nombre_xlsx', `${finalFileName}.xlsx`);
-      formData.append('bible_file', bibleFile);
-
-      // Log files before appending
-      console.log('Files to be sent:', {
-        bible: {
-          name: bibleFile.name,
-          type: bibleFile.type,
-          size: bibleFile.size
-        },
-        script_files: Object.entries(files).map(([key, file]) => ({
-          part: key,
-          name: file.name,
-          type: file.type,
-          size: file.size
-        }))
-      });
+      
+      if (hasBible === 'yes' && bibleFile) {
+        formData.append('bible_file', bibleFile);
+      }
 
       // Append all files
       Object.values(files).forEach((file) => {
         formData.append('archivos', file);
       });
 
-      // Log FormData contents
-      console.log('FormData contents:');
-      for (let pair of formData.entries()) {
-        if (pair[1] instanceof File) {
-          console.log(`${pair[0]}: File(${pair[1].name}, ${pair[1].type}, ${pair[1].size} bytes)`);
-        } else {
-          console.log(`${pair[0]}: ${pair[1]}`);
-        }
-      }
-
-      console.log('Request details:', {
-        url: `${urlback}/api/procesar-guiones-doc`,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        body: {
-          idioma_destino: selectedLanguage ? selectedLanguage.name : language,
-          nombre_xlsx: `${finalFileName}.xlsx`,
-          bible_file: {
-            name: bibleFile.name,
-            type: bibleFile.type,
-            size: bibleFile.size
-          },
-          archivos_count: Object.keys(files).length,
-          archivos_details: Object.entries(files).map(([key, file]) => ({
-            part: key,
-            name: file.name,
-            type: file.type,
-            size: file.size
-          }))
-        }
-      });
-
-      const response = await fetch(`${urlback}/api/procesar-guiones-doc`, {
+      // Choose the appropriate endpoint based on whether Bible file is included
+      const endpoint = hasBible === 'yes' ? '/api/procesar-guiones-doc' : '/api/procesar-guiones-doc-sin-biblia';
+      
+      const response = await fetch(`${urlback}${endpoint}`, {
         method: 'POST',
         body: formData,
       });
@@ -211,6 +169,45 @@ const TranscripIADicapta = () => {
         </div>
 
         <div className="form-group2">
+          <label>Do you have a Bible file?</label>
+          <select
+            className="input-short"
+            value={hasBible}
+            onChange={(e) => {
+              setHasBible(e.target.value);
+              if (e.target.value === 'no') {
+                setBibleFile(null);
+              }
+            }}
+          >
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </div>
+
+        {hasBible === 'yes' && (
+          <div className="form-group2">
+            {bibleFile ? (
+              <div className="file-label-selected">
+                <p className="file-name">Bible file: {bibleFile.name}</p>
+              </div>
+            ) : (
+              <label className="file-label" htmlFor="bible-file-upload">
+                Upload Bible file (XLSX) <FileUploadIcon className="file-icon" />
+                <input
+                  id="bible-file-upload"
+                  type="file"
+                  accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  onChange={handleBibleFileChange}
+                  className="input-short"
+                  style={{ display: 'none' }}
+                />
+              </label>
+            )}
+          </div>
+        )}
+
+        <div className="form-group2">
           <label>Number of Parts of the script</label>
           <select
             className="input-short"
@@ -226,26 +223,6 @@ const TranscripIADicapta = () => {
               </option>
             ))}
           </select>
-        </div>
-
-        <div className="form-group2">
-          {bibleFile ? (
-            <div className="file-label-selected">
-              <p className="file-name">Bible file: {bibleFile.name}</p>
-            </div>
-          ) : (
-            <label className="file-label" htmlFor="bible-file-upload">
-              Upload Bible file (XLSX) <FileUploadIcon className="file-icon" />
-              <input
-                id="bible-file-upload"
-                type="file"
-                accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                onChange={handleBibleFileChange}
-                className="input-short"
-                style={{ display: 'none' }}
-              />
-            </label>
-          )}
         </div>
 
         {[...Array(numberOfParts)].map((_, index) => (
