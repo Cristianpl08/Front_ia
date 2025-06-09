@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Menu from './components/Menu';
 import TextToSpeechForm from './components/TextToSpeechForm';
 import TranscripIADicapta from './components/TranscripIA';
+import GenerateSimpleScript from './components/GenerateSimpleScript';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -47,6 +48,15 @@ function App() {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <TranscripIADicaptaWithBack />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/generate-simple-script"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <GenerateSimpleScriptWithBack />
             </ProtectedRoute>
           }
         />
@@ -122,6 +132,13 @@ const TranscripIADicaptaWithBack = () => (
   <>
     <BackButton />
     <TranscripIADicapta />
+  </>
+);
+
+const GenerateSimpleScriptWithBack = () => (
+  <>
+    <BackButton />
+    <GenerateSimpleScript />
   </>
 );
 
