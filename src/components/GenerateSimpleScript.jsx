@@ -3,51 +3,113 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const GenerateSimpleScript = () => {
-  const [videoFile, setVideoFile] = useState(null);
+  const [audioFile, setAudioFile] = useState(null);
+  const [videoTimeOffset, setVideoTimeOffset] = useState(0);
+  const [srtStartNumber, setSrtStartNumber] = useState(1);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const urlback = 'https://backend-ia.dicapta.com';
 
-  const handleVideoChange = (e) => {
+  // Convert seconds to SRT time format (HH:MM:SS,mmm)
+  const secondsToSrtTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    const ms = Math.floor((seconds % 1) * 1000);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')},${ms.toString().padStart(3, '0')}`;
+  };
+
+  // Convert SRT time format to seconds
+  const srtTimeToSeconds = (srtTime) => {
+    const [time, ms] = srtTime.split(',');
+    const [hours, minutes, seconds] = time.split(':').map(Number);
+    return hours * 3600 + minutes * 60 + seconds + (ms ? Number(ms) / 1000 : 0);
+  };
+
+  // Parse time input and update videoTimeOffset
+  const handleTimeChange = (type, value) => {
+    const currentTime = secondsToSrtTime(videoTimeOffset);
+    const [time, ms] = currentTime.split(',');
+    const [hours, minutes, seconds] = time.split(':').map(Number);
+    
+    let newHours = hours;
+    let newMinutes = minutes;
+    let newSeconds = seconds;
+    let newMs = ms ? Number(ms) : 0;
+
+    switch (type) {
+      case 'hours':
+        newHours = Math.max(0, Math.min(99, parseInt(value) || 0));
+        break;
+      case 'minutes':
+        newMinutes = Math.max(0, Math.min(59, parseInt(value) || 0));
+        break;
+      case 'seconds':
+        newSeconds = Math.max(0, Math.min(59, parseInt(value) || 0));
+        break;
+      case 'milliseconds':
+        newMs = Math.max(0, Math.min(999, parseInt(value) || 0));
+        break;
+      default:
+        break;
+    }
+
+    const newSrtTime = `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}:${newSeconds.toString().padStart(2, '0')},${newMs.toString().padStart(3, '0')}`;
+    setVideoTimeOffset(srtTimeToSeconds(newSrtTime));
+  };
+
+  const handleAudioChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      console.log('Video file selected:', {
+      console.log('Audio file selected:', {
         name: file.name,
         type: file.type,
         size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`
       });
       
-      // Check if file is a video
-      if (!file.type.startsWith('video/')) {
+      // Check if file is an MP3
+      if (file.type !== 'audio/mpeg' && file.type !== 'audio/mp3') {
         console.warn('Invalid file type:', file.type);
-        setMessage('Please upload only video files');
+        setMessage('Please upload only MP3 files');
         return;
       }
-      setVideoFile(file);
+      setAudioFile(file);
     }
+  };
+
+  const clearForm = () => {
+    setAudioFile(null);
+    setVideoTimeOffset(0);
+    setSrtStartNumber(1);
+    setMessage('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form submitted');
 
-    if (!videoFile) {
-      console.warn('No video file selected');
-      setMessage('Please upload a video file.');
+    if (!audioFile) {
+      console.warn('No audio file selected');
+      setMessage('Please upload an MP3 file.');
       return;
     }
 
     setIsLoading(true);
-    setMessage('Processing video... This may take several minutes.');
-    console.log('Starting video processing');
+    setMessage('Processing audio... This may take several minutes.');
+    console.log('Starting audio processing');
 
     try {
       const formData = new FormData();
-      formData.append('video_file', videoFile);
-      console.log('FormData created with video file');
+      formData.append('audio_file', audioFile);
+      formData.append('video_time_offset', videoTimeOffset);
+      formData.append('srt_start_number', srtStartNumber);
+      console.log('FormData created with audio file and parameters:', {
+        video_time_offset: videoTimeOffset,
+        srt_start_number: srtStartNumber
+      });
       
-      console.log('Sending request to:', `${urlback}/api/process-video`);
-      const response = await fetch(`${urlback}/api/process-video`, {
+      console.log('Sending request to:', `${urlback}/api/process-audio`);
+      const response = await fetch(`${urlback}/api/process-audio`, {
         method: 'POST',
         body: formData,
       });
@@ -65,7 +127,7 @@ const GenerateSimpleScript = () => {
           statusText: response.statusText,
           error: errorData
         });
-        throw new Error(errorData.error || 'Error processing video');
+        throw new Error(errorData.error || 'Error processing audio');
       }
 
       // Get the blob from the response
@@ -87,9 +149,12 @@ const GenerateSimpleScript = () => {
       document.body.removeChild(a);
 
       console.log('Process completed successfully');
-      setMessage('Video processed successfully! SRT file has been downloaded.');
+      setMessage('Audio processed successfully! SRT file has been downloaded.');
+      
+      // Clear form after successful processing
+      clearForm();
     } catch (error) {
-      console.error('Error in video processing:', {
+      console.error('Error in audio processing:', {
         message: error.message,
         stack: error.stack,
         name: error.name
@@ -101,30 +166,122 @@ const GenerateSimpleScript = () => {
     }
   };
 
+  const currentTimeDisplay = secondsToSrtTime(videoTimeOffset);
+  const [time, ms] = currentTimeDisplay.split(',');
+  const [hours, minutes, seconds] = time.split(':');
+
   return (
     <div className="container">
       <h1>Generate Simple SRT</h1>
-      <p className="subtitle">Upload your video for processing</p>
+      <p className="subtitle">Upload your MP3 file for processing</p>
 
       <form onSubmit={handleSubmit} className="transcrip-form">
         <div className="form-group2">
-          {videoFile ? (
+          {audioFile ? (
             <div className="file-label-selected">
-              <p className="file-name">Video: {videoFile.name}</p>
+              <p className="file-name">Audio: {audioFile.name}</p>
             </div>
           ) : (
-            <label className="file-label" htmlFor="video-upload">
-              Upload Video <FileUploadIcon className="file-icon" />
+            <label className="file-label" htmlFor="audio-upload">
+              Upload MP3 <FileUploadIcon className="file-icon" />
               <input
-                id="video-upload"
+                id="audio-upload"
                 type="file"
-                accept="video/*"
-                onChange={handleVideoChange}
+                accept="audio/mpeg,audio/mp3"
+                onChange={handleAudioChange}
                 className="input-short"
                 style={{ display: 'none' }}
               />
             </label>
           )}
+        </div>
+
+        <div className="form-group2">
+          <label className="form-label">
+            Video Time Offset:
+          </label>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '4px',
+            fontFamily: 'monospace',
+            fontSize: '16px'
+          }}>
+            <input
+              type="number"
+              min="0"
+              max="99"
+              value={hours}
+              onChange={(e) => handleTimeChange('hours', e.target.value)}
+              style={{
+                width: '40px',
+                textAlign: 'center',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                padding: '4px'
+              }}
+            />
+            <span>:</span>
+            <input
+              type="number"
+              min="0"
+              max="59"
+              value={minutes}
+              onChange={(e) => handleTimeChange('minutes', e.target.value)}
+              style={{
+                width: '40px',
+                textAlign: 'center',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                padding: '4px'
+              }}
+            />
+            <span>:</span>
+            <input
+              type="number"
+              min="0"
+              max="59"
+              value={seconds}
+              onChange={(e) => handleTimeChange('seconds', e.target.value)}
+              style={{
+                width: '40px',
+                textAlign: 'center',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                padding: '4px'
+              }}
+            />
+            <span>,</span>
+            <input
+              type="number"
+              min="0"
+              max="999"
+              value={ms}
+              onChange={(e) => handleTimeChange('milliseconds', e.target.value)}
+              style={{
+                width: '50px',
+                textAlign: 'center',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                padding: '4px'
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="form-group2">
+          <label htmlFor="srt-start-number" className="form-label">
+            SRT Start Number:
+          </label>
+          <input
+            id="srt-start-number"
+            type="number"
+            min="1"
+            value={srtStartNumber}
+            onChange={(e) => setSrtStartNumber(parseInt(e.target.value) || 1)}
+            className="input-short"
+            placeholder="1"
+          />
         </div>
 
         <div className="form-actions" style={{ position: 'relative', height: 48 }}>
@@ -144,7 +301,7 @@ const GenerateSimpleScript = () => {
               background: 'transparent' 
             } : {}}
           >
-            Process Video
+            Process Audio
           </button>
           {isLoading && (
             <div style={{
