@@ -6,6 +6,7 @@ import Menu from './components/Menu';
 import TextToSpeechForm from './components/TextToSpeechForm';
 import TranscripIADicapta from './components/TranscripIA';
 import GenerateSimpleScript from './components/GenerateSimpleScript';
+import RTFProcessingTools from './components/RTFProcessingTools';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -57,6 +58,15 @@ function App() {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <GenerateSimpleScriptWithBack />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/rtf-processing-tools"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <RTFProcessingToolsWithBack />
             </ProtectedRoute>
           }
         />
@@ -139,6 +149,13 @@ const GenerateSimpleScriptWithBack = () => (
   <>
     <BackButton />
     <GenerateSimpleScript />
+  </>
+);
+
+const RTFProcessingToolsWithBack = () => (
+  <>
+    <BackButton />
+    <RTFProcessingTools />
   </>
 );
 

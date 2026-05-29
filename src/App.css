@@ -326,3 +326,222 @@ color: #000000;
     width: 100%;
   }
 }
+
+.rtf-tools-page {
+  width: min(78vw, 980px);
+  margin: 6.5rem auto 3rem;
+  color: #2f2f2f;
+  font-family: 'Comic Sans MS', 'Cursive', sans-serif;
+}
+
+.rtf-tools-title {
+  width: 100%;
+  color: #333333;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: clamp(2rem, 3.4vw, 2.9rem);
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.rtf-tabs-shell,
+.rtf-panel {
+  background: #f7f8ff;
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(31, 60, 128, 0.16);
+}
+
+.rtf-tabs-shell {
+  padding: 0.75rem;
+  margin-bottom: 2.4rem;
+}
+
+.rtf-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.rtf-tab {
+  min-height: 62px;
+  margin: 0;
+  border: 0;
+  border-radius: 7px;
+  background: #f0f1f3;
+  color: #5b67d8;
+  font-family: 'Comic Sans MS', 'Cursive', sans-serif;
+  font-size: clamp(1rem, 1.7vw, 1.3rem);
+  font-weight: 700;
+  line-height: 1.25;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+}
+
+.rtf-tab.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #677ce8, #794ea7);
+}
+
+.rtf-panel {
+  padding: clamp(2rem, 3.2vw, 3.4rem);
+}
+
+.rtf-panel h2 {
+  color: #6670df;
+  font-family: 'Comic Sans MS', 'Cursive', sans-serif;
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+  text-align: center;
+  text-shadow: 0 3px 6px rgba(71, 81, 185, 0.22);
+  margin: 0 0 1.1rem;
+}
+
+.rtf-panel-description {
+  max-width: 760px;
+  margin: 0 auto 2.5rem;
+  color: #666666;
+  font-family: 'Comic Sans MS', 'Cursive', sans-serif;
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  line-height: 1.45;
+  text-align: center;
+}
+
+.rtf-process-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.rtf-upload-box {
+  display: flex;
+  width: min(450px, 100%);
+  min-height: 150px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  border: 3px dashed #bbc9ff;
+  border-radius: 16px;
+  background: #fbfcff;
+  color: #000000;
+  cursor: pointer;
+  font-family: 'Comic Sans MS', 'Cursive', sans-serif;
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-weight: 700;
+  box-shadow: 0 16px 45px rgba(100, 120, 220, 0.15);
+}
+
+.rtf-upload-icon {
+  color: #667ce8;
+  font-size: 3rem !important;
+  filter: drop-shadow(0 5px 8px rgba(57, 84, 200, 0.24));
+}
+
+.rtf-selected-file {
+  width: min(450px, 100%);
+  padding: 0.9rem 1.4rem;
+  border: 2px solid #17b780;
+  border-radius: 14px;
+  background: #ddfff0;
+  color: #00684e;
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 12px 34px rgba(23, 183, 128, 0.16);
+}
+
+.rtf-process-button {
+  display: flex;
+  width: min(760px, 100%);
+  min-height: 62px;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #667ce8, #794ea7);
+  color: #ffffff;
+  font-family: 'Comic Sans MS', 'Cursive', sans-serif;
+  font-size: clamp(1rem, 1.8vw, 1.45rem);
+  font-weight: 700;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.26);
+  box-shadow: 0 18px 38px rgba(90, 91, 180, 0.2);
+}
+
+.rtf-process-button:disabled {
+  background: linear-gradient(135deg, #8f9ce9, #9070bc);
+}
+
+.rtf-result-card {
+  margin: 3rem auto 0;
+  padding: clamp(1.8rem, 4vw, 3.4rem);
+  border: 3px solid #17b780;
+  border-radius: 24px;
+  background: #dcffef;
+  color: #00745a;
+  box-shadow: 0 18px 45px rgba(23, 183, 128, 0.16);
+}
+
+.rtf-result-card h3 {
+  margin: 0 0 2.4rem;
+  color: #00684e;
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  text-align: center;
+  text-shadow: 0 3px 6px rgba(0, 104, 78, 0.2);
+}
+
+.rtf-result-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgba(23, 183, 128, 0.25);
+  color: #00745a;
+  font-size: clamp(1.05rem, 1.8vw, 1.45rem);
+  line-height: 1.35;
+}
+
+.rtf-result-row:last-child {
+  border-bottom: 0;
+}
+
+.rtf-result-row strong {
+  flex: 0 0 auto;
+  color: #00684e;
+}
+
+.rtf-message {
+  color: #b00020;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.rtf-empty-tab {
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 760px) {
+  .rtf-tools-page {
+    margin-top: 4rem;
+  }
+
+  .rtf-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .rtf-tab {
+    min-height: 90px;
+  }
+
+  .rtf-upload-box {
+    min-height: 220px;
+  }
+
+  .rtf-result-row {
+    flex-direction: column;
+  }
+}

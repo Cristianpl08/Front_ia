@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SurroundSoundIcon from '@mui/icons-material/SurroundSound';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ArticleIcon from '@mui/icons-material/Article';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 const Menu = () => {
   const navigate = useNavigate();
@@ -19,9 +20,13 @@ const Menu = () => {
           <DescriptionIcon style={{ marginRight: '10px' }} />
           Transcrip IA
         </div>
-        <div className="menu-option" onClick={() => navigate('/generate-simple-script')} style={{ cursor: 'pointer', border: '1px solid #ccc', padding: '20px', borderRadius: '5px', maxWidth: '300px', margin: '0 auto', textAlign: 'center', fontFamily: 'Comic Sans MS, cursive, sans-serif',fontSize: '1.2rem' ,marginBottom: '20px' ,marginBottom: '20px'  }}>
+        <div className="menu-option" onClick={() => navigate('/generate-simple-script')} style={{ cursor: 'pointer', border: '1px solid #ccc', padding: '20px', borderRadius: '5px', maxWidth: '300px', margin: '0 auto', textAlign: 'center', fontFamily: 'Comic Sans MS, cursive, sans-serif',fontSize: '1.2rem' ,marginBottom: '20px' }}>
           <ArticleIcon style={{ marginRight: '10px' }} />
           Generate Simple SRT
+        </div>
+        <div className="menu-option" onClick={() => navigate('/rtf-processing-tools')} style={{ cursor: 'pointer', border: '1px solid #ccc', padding: '20px', borderRadius: '5px', maxWidth: '300px', margin: '0 auto', textAlign: 'center', fontFamily: 'Comic Sans MS, cursive, sans-serif',fontSize: '1.2rem' ,marginBottom: '20px' }}>
+          <UploadFileIcon style={{ marginRight: '10px' }} />
+          Generate Times by RTF
         </div>
       </div>
     </div>
