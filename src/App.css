@@ -122,9 +122,11 @@ button {
 .clean-btn2 {
   background-color: #FFDB58;
   color: #000000;
-  width: 30%;
- margin-right: 50%;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  margin-right: 50%;
  border: 1px solid #000; /* Añadir borde */
+  white-space: nowrap;
 }
 .process-btn {
   background-color: #BDFCC9;
@@ -230,6 +232,36 @@ color: #000000;
 .simple-srt-form {
   max-width: 760px;
   margin: 7rem auto 0;
+}
+
+.translate-ai-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.translate-ai-form {
+  width: min(100%, 360px);
+  margin: 1.5rem auto 0;
+}
+
+.translate-ai-form .form-group2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.translate-ai-form .input-short,
+.translate-ai-form .file-label,
+.translate-ai-form .file-label-selected {
+  width: 100%;
+}
+
+.translate-ai-form .process-btn2 {
+  display: block;
+  width: 120px;
+  margin: 1rem auto 0;
 }
 
 .simple-srt-tabs {

@@ -199,7 +199,7 @@ const GenerateSimpleScript = () => {
 
   return (
     <div className="container">
-      <h1>Generate Simple SRT</h1>
+      <h1>Generate Transcript</h1>
       <p className="subtitle">Upload your MP3 file for processing</p>
 
       <form onSubmit={handleSubmit} className="transcrip-form simple-srt-form">

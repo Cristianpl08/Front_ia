@@ -136,11 +136,11 @@ const TranscripIADicapta = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Transcrip IA Dicapta</h1>
-      <p className="subtitle">Upload your RTF files for transcription</p>
+    <div className="container translate-ai-page">
+      <h1>Translate AI</h1>
+      <p className="subtitle">Upload your RTF files for translation</p>
 
-      <form onSubmit={handleSubmit} className="transcrip-form">
+      <form onSubmit={handleSubmit} className="transcrip-form translate-ai-form">
         <div className="form-group2">
           <label>Language</label>
           <select
