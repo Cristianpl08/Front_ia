@@ -2,8 +2,26 @@ import React, { useState } from 'react';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CircularProgress from '@mui/material/CircularProgress';
 
+const processingTabs = [
+  {
+    id: 'whisper',
+    label: 'Generate Whisper',
+    endpoint: '/api/process-audio',
+  },
+  {
+    id: 'gemini-simple',
+    label: 'Generate Gemini Simple',
+    endpoint: '/api/process-audio-gemini',
+  },
+  {
+    id: 'gemini-times',
+    label: 'Generate Gemini with Times',
+    endpoint: '/api/process-audio-gemini-time',
+  },
+];
+
 const GenerateSimpleScript = () => {
-  const [fileType, setFileType] = useState('audio'); // 'audio' or 'video'
+  const [activeTab, setActiveTab] = useState('gemini-times');
   const [mediaFile, setMediaFile] = useState(null);
   const [videoTimeOffset, setVideoTimeOffset] = useState(0);
   const [srtStartNumber, setSrtStartNumber] = useState(1);
@@ -68,19 +86,10 @@ const GenerateSimpleScript = () => {
         size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`
       });
       
-      // Validate file type based on selection
-      if (fileType === 'audio') {
-        if (file.type !== 'audio/mpeg' && file.type !== 'audio/mp3') {
-          console.warn('Invalid audio file type:', file.type);
-          setMessage('Please upload only MP3 files for audio processing');
-          return;
-        }
-      } else if (fileType === 'video') {
-        if (!file.type.startsWith('video/')) {
-          console.warn('Invalid video file type:', file.type);
-          setMessage('Please upload only video files for video processing');
-          return;
-        }
+      if (file.type !== 'audio/mpeg' && file.type !== 'audio/mp3') {
+        console.warn('Invalid audio file type:', file.type);
+        setMessage('Please upload only MP3 files for audio processing');
+        return;
       }
       
       setMediaFile(file);
@@ -101,37 +110,29 @@ const GenerateSimpleScript = () => {
 
     if (!mediaFile) {
       console.warn('No file selected');
-      setMessage(`Please upload a ${fileType} file.`);
+      setMessage('Please upload an MP3 file.');
       return;
     }
 
+    const selectedTab = processingTabs.find((tab) => tab.id === activeTab) || processingTabs[0];
+
     setIsLoading(true);
-    setMessage(`Processing ${fileType}... This may take several minutes.`);
-    console.log(`Starting ${fileType} processing`);
+    setMessage('Processing audio... This may take several minutes.');
+    console.log('Starting audio processing with tab:', selectedTab.id);
 
     try {
       const formData = new FormData();
-      const endpoint = fileType === 'audio' ? '/api/process-audio' : '/api/process-video';
-      const fileField = fileType === 'audio' ? 'audio_file' : 'video_file';
+      const endpoint = selectedTab.endpoint;
       
-      formData.append(fileField, mediaFile);
+      formData.append('audio_file', mediaFile);
+      formData.append('video_time_offset', videoTimeOffset);
+      formData.append('srt_start_number', srtStartNumber);
       
-      // Add time offset and start number only for audio processing
-      if (fileType === 'audio') {
-        formData.append('video_time_offset', videoTimeOffset);
-        formData.append('srt_start_number', srtStartNumber);
-        console.log('FormData created with audio file and parameters:', {
-          video_time_offset: videoTimeOffset,
-          srt_start_number: srtStartNumber
-        });
-      } else {
-        formData.append('video_time_offset', videoTimeOffset);
-        formData.append('srt_start_number', srtStartNumber);
-        console.log('FormData created with video file and parameters:', {
-          video_time_offset: videoTimeOffset,
-          srt_start_number: srtStartNumber
-        });
-      }
+      console.log('FormData created with audio file and parameters:', {
+        endpoint,
+        video_time_offset: videoTimeOffset,
+        srt_start_number: srtStartNumber
+      });
       
       console.log('Sending request to:', `${urlback}${endpoint}`);
       const response = await fetch(`${urlback}${endpoint}`, {
@@ -152,7 +153,7 @@ const GenerateSimpleScript = () => {
           statusText: response.statusText,
           error: errorData
         });
-        throw new Error(errorData.error || `Error processing ${fileType}`);
+        throw new Error(errorData.error || 'Error processing audio');
       }
 
       // Get the blob from the response
@@ -174,12 +175,12 @@ const GenerateSimpleScript = () => {
       document.body.removeChild(a);
 
       console.log('Process completed successfully');
-      setMessage(`${fileType.charAt(0).toUpperCase() + fileType.slice(1)} processed successfully! DOCX file has been downloaded.`);
+      setMessage('Audio processed successfully! DOCX file has been downloaded.');
       
       // Clear form after successful processing
       clearForm();
     } catch (error) {
-      console.error(`Error in ${fileType} processing:`, {
+      console.error('Error in audio processing:', {
         message: error.message,
         stack: error.stack,
         name: error.name
@@ -194,76 +195,45 @@ const GenerateSimpleScript = () => {
   const currentTimeDisplay = secondsToSrtTime(videoTimeOffset);
   const [time, ms] = currentTimeDisplay.split(',');
   const [hours, minutes, seconds] = time.split(':');
+  const selectedTab = processingTabs.find((tab) => tab.id === activeTab) || processingTabs[0];
 
   return (
     <div className="container">
       <h1>Generate Simple SRT</h1>
-      <p className="subtitle">Upload your audio or video file for processing</p>
+      <p className="subtitle">Upload your MP3 file for processing</p>
 
-      <form onSubmit={handleSubmit} className="transcrip-form">
-        {/* File Type Selection */}
-        <div className="form-group2">
-          <label className="form-label">Select File Type:</label>
-          <div style={{ 
-            display: 'flex', 
-            gap: '16px',
-            marginTop: '8px',
-            justifyContent: 'center'
-          }}>
-            <label style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px',
-              cursor: 'pointer'
-            }}>
-              <input
-                type="radio"
-                name="fileType"
-                value="audio"
-                checked={fileType === 'audio'}
-                onChange={(e) => {
-                  setFileType(e.target.value);
-                  setMediaFile(null); // Clear file when switching types
-                  setMessage('');
-                }}
-              />
-              Audio (MP3)
-            </label>
-            <label style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px',
-              cursor: 'pointer'
-            }}>
-              <input
-                type="radio"
-                name="fileType"
-                value="video"
-                checked={fileType === 'video'}
-                onChange={(e) => {
-                  setFileType(e.target.value);
-                  setMediaFile(null); // Clear file when switching types
-                  setMessage('');
-                }}
-              />
-              Video
-            </label>
-          </div>
+      <form onSubmit={handleSubmit} className="transcrip-form simple-srt-form">
+        <div className="simple-srt-tabs" role="tablist" aria-label="Audio processing method">
+          {processingTabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              className={`simple-srt-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setMessage('');
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         {/* File Upload */}
         <div className="form-group2">
           {mediaFile ? (
             <div className="file-label-selected">
-              <p className="file-name">{fileType.charAt(0).toUpperCase() + fileType.slice(1)}: {mediaFile.name}</p>
+              <p className="file-name">MP3: {mediaFile.name}</p>
             </div>
           ) : (
             <label className="file-label" htmlFor="media-upload">
-              Upload {fileType.charAt(0).toUpperCase() + fileType.slice(1)} <FileUploadIcon className="file-icon" />
+              Upload MP3 <FileUploadIcon className="file-icon" />
               <input
                 id="media-upload"
                 type="file"
-                accept={fileType === 'audio' ? 'audio/mpeg,audio/mp3' : 'video/*'}
+                accept="audio/mpeg,audio/mp3"
                 onChange={handleFileChange}
                 className="input-short"
                 style={{ display: 'none' }}
@@ -379,7 +349,7 @@ const GenerateSimpleScript = () => {
               background: 'transparent' 
             } : {}}
           >
-            Process {fileType.charAt(0).toUpperCase() + fileType.slice(1)}
+            Process {selectedTab.label}
           </button>
           {isLoading && (
             <div style={{

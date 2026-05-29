@@ -227,3 +227,102 @@ color: #000000;
   color: #000000;
 }
 
+.simple-srt-form {
+  max-width: 760px;
+  margin: 7rem auto 0;
+}
+
+.simple-srt-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.simple-srt-tab {
+  width: auto;
+  min-width: 180px;
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  color: #f1f1f1;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.simple-srt-tab:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.simple-srt-tab.active {
+  border-color: #ffffff;
+}
+
+.simple-srt-form .file-label,
+.simple-srt-form .file-label-selected {
+  min-height: 118px;
+  margin-bottom: 1.6rem;
+  border: 2px dashed #ffffff;
+  border-radius: 8px;
+  color: #000000;
+  font-family: Arial, sans-serif;
+  font-size: 1.1rem;
+  gap: 1rem;
+}
+
+.simple-srt-form .file-icon {
+  color: #000000;
+}
+
+.simple-srt-form .form-group2 {
+  text-align: left;
+}
+
+.simple-srt-form .form-label {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: #000000;
+  font-family: Arial, sans-serif;
+  font-size: 1.15rem;
+}
+
+.simple-srt-form .input-short {
+  display: block;
+  max-width: 360px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  font-size: 1.15rem;
+}
+
+.simple-srt-form .process-btn2 {
+  display: block;
+  width: min(520px, 100%);
+  margin: 1.5rem auto 0;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  background-color: #BDFCC9;
+  color: #000000;
+  font-family: Arial, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .simple-srt-form {
+    margin-top: 3rem;
+  }
+
+  .simple-srt-tabs {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .simple-srt-tab {
+    width: 100%;
+  }
+}
