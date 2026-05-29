@@ -198,7 +198,7 @@ const GenerateSimpleScript = () => {
   const selectedTab = processingTabs.find((tab) => tab.id === activeTab) || processingTabs[0];
 
   return (
-    <div className="container">
+    <div className="container generate-transcript-page">
       <h1>Generate Transcript</h1>
       <p className="subtitle">Upload your MP3 file for processing</p>
 
@@ -216,163 +216,135 @@ const GenerateSimpleScript = () => {
                 setMessage('');
               }}
             >
-              {tab.label}
+              <span>{tab.label.replace('Generate ', '')}</span>
             </button>
           ))}
         </div>
 
-        {/* File Upload */}
-        <div className="form-group2">
-          {mediaFile ? (
-            <div className="file-label-selected">
-              <p className="file-name">MP3: {mediaFile.name}</p>
-            </div>
-          ) : (
-            <label className="file-label" htmlFor="media-upload">
-              Upload MP3 <FileUploadIcon className="file-icon" />
-              <input
-                id="media-upload"
-                type="file"
-                accept="audio/mpeg,audio/mp3"
-                onChange={handleFileChange}
-                className="input-short"
-                style={{ display: 'none' }}
-              />
-            </label>
-          )}
-        </div>
+        <div className="simple-srt-panel">
+          <div className="simple-srt-panel-heading">
+            <h2>{selectedTab.label}</h2>
+            <p>Choose an MP3, set the timing options, and download the generated DOCX transcript.</p>
+          </div>
 
-        {/* Time Offset - Show for both audio and video */}
-        <div className="form-group2">
-          <label className="form-label">
-            Video Time Offset:
-          </label>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '4px',
-            fontFamily: 'monospace',
-            fontSize: '16px'
-          }}>
-            <input
-              type="number"
-              min="0"
-              max="99"
-              value={hours}
-              onChange={(e) => handleTimeChange('hours', e.target.value)}
-              style={{
-                width: '40px',
-                textAlign: 'center',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                padding: '4px'
-              }}
-            />
-            <span>:</span>
-            <input
-              type="number"
-              min="0"
-              max="59"
-              value={minutes}
-              onChange={(e) => handleTimeChange('minutes', e.target.value)}
-              style={{
-                width: '40px',
-                textAlign: 'center',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                padding: '4px'
-              }}
-            />
-            <span>:</span>
-            <input
-              type="number"
-              min="0"
-              max="59"
-              value={seconds}
-              onChange={(e) => handleTimeChange('seconds', e.target.value)}
-              style={{
-                width: '40px',
-                textAlign: 'center',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                padding: '4px'
-              }}
-            />
-            <span>,</span>
-            <input
-              type="number"
-              min="0"
-              max="999"
-              value={ms}
-              onChange={(e) => handleTimeChange('milliseconds', e.target.value)}
-              style={{
-                width: '50px',
-                textAlign: 'center',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                padding: '4px'
-              }}
-            />
+          <div className="form-group2 simple-srt-upload-group">
+            {mediaFile ? (
+              <div className="file-label-selected">
+                <FileUploadIcon className="file-icon" />
+                <p className="file-name">Selected: {mediaFile.name}</p>
+              </div>
+            ) : (
+              <label className="file-label" htmlFor="media-upload">
+                <FileUploadIcon className="file-icon" />
+                <span>Upload MP3</span>
+                <input
+                  id="media-upload"
+                  type="file"
+                  accept="audio/mpeg,audio/mp3"
+                  onChange={handleFileChange}
+                  className="input-short"
+                  style={{ display: 'none' }}
+                />
+              </label>
+            )}
+          </div>
+
+          <div className="simple-srt-settings">
+            <div className="form-group2 simple-srt-setting-card">
+              <label className="form-label">
+                Video Time Offset
+              </label>
+              <div className="simple-srt-time-inputs">
+                <label>
+                  <span>Hours</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="99"
+                    value={hours}
+                    onChange={(e) => handleTimeChange('hours', e.target.value)}
+                  />
+                </label>
+                <span className="simple-srt-time-separator">:</span>
+                <label>
+                  <span>Minutes</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="59"
+                    value={minutes}
+                    onChange={(e) => handleTimeChange('minutes', e.target.value)}
+                  />
+                </label>
+                <span className="simple-srt-time-separator">:</span>
+                <label>
+                  <span>Seconds</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="59"
+                    value={seconds}
+                    onChange={(e) => handleTimeChange('seconds', e.target.value)}
+                  />
+                </label>
+                <span className="simple-srt-time-separator">,</span>
+                <label>
+                  <span>Milliseconds</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="999"
+                    value={ms}
+                    onChange={(e) => handleTimeChange('milliseconds', e.target.value)}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="form-group2 simple-srt-setting-card">
+              <label htmlFor="srt-start-number" className="form-label">
+                SRT Start Number
+              </label>
+              <input
+                id="srt-start-number"
+                type="number"
+                min="1"
+                value={srtStartNumber}
+                onChange={(e) => setSrtStartNumber(parseInt(e.target.value) || 1)}
+                className="input-short"
+                placeholder="1"
+              />
+            </div>
+          </div>
+
+          <div className="form-actions simple-srt-actions">
+            <button 
+              className="process-btn2" 
+              type="submit"
+              disabled={isLoading}
+              style={isLoading ? { 
+                opacity: 0, 
+                pointerEvents: 'none', 
+                position: 'absolute', 
+                left: 0, 
+                top: 0, 
+                width: '100%', 
+                height: '100%', 
+                border: 'none', 
+                background: 'transparent' 
+              } : {}}
+            >
+              Process {selectedTab.label}
+            </button>
+            {isLoading && (
+              <div className="simple-srt-loading">
+                <CircularProgress size={24} style={{ color: '#333' }} />
+                <span>Processing...</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* SRT Start Number - Show for both audio and video */}
-        <div className="form-group2">
-          <label htmlFor="srt-start-number" className="form-label">
-            SRT Start Number:
-          </label>
-          <input
-            id="srt-start-number"
-            type="number"
-            min="1"
-            value={srtStartNumber}
-            onChange={(e) => setSrtStartNumber(parseInt(e.target.value) || 1)}
-            className="input-short"
-            placeholder="1"
-          />
-        </div>
-
-        <div className="form-actions" style={{ position: 'relative', height: 48 }}>
-          <button 
-            className="process-btn2" 
-            type="submit"
-            disabled={isLoading}
-            style={isLoading ? { 
-              opacity: 0, 
-              pointerEvents: 'none', 
-              position: 'absolute', 
-              left: 0, 
-              top: 0, 
-              width: '100%', 
-              height: '100%', 
-              border: 'none', 
-              background: 'transparent' 
-            } : {}}
-          >
-            Process {selectedTab.label}
-          </button>
-          {isLoading && (
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              background: '#e0e0e0',
-              borderRadius: '8px',
-              padding: '8px 16px',
-              zIndex: 2,
-              border: '1px solid #333',
-              minWidth: 160,
-              justifyContent: 'center'
-            }}>
-              <CircularProgress size={24} style={{ color: '#333' }} />
-              <span style={{ color: '#333', fontWeight: 600 }}>Processing...</span>
-            </div>
-          )}
-        </div>
       </form>
 
       {message && <p className="message-info">{message}</p>}
